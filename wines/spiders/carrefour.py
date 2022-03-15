@@ -16,7 +16,11 @@ location = firstWine.css('a::attr(title)').re(r"^D.O.\s*(.*)")[0].replace("Ca. "
 class CarrefourClickSpider(scrapy.Spider):
     name = 'carrefour'
     allowed_domains = ['carrefour.es']
-    start_urls = ['https://www.carrefour.es/bodega/vinos-tintos/vinos-tintos-nacionales/ver-todos/N-1dxafdm/c', 'https://www.carrefour.es/bodega/vinos-blancos/vinos-blancos-nacionales/ver-todos/N-distyh/c', 'https://www.carrefour.es/bodega/vinos-rosados/vinos-rosados-nacionales/ver-todos/N-1yz8sfs/c']
+
+    # https://blog.appliedinformaticsinc.com/manipulate-scrapy-start_urls-before-a-request-is-made/
+    # https://stackoverflow.com/questions/9322219/how-to-generate-the-start-urls-dynamically-in-crawling
+    start_urls = ['https://www.carrefour.es/bodega/vinos-tintos/vinos-tintos-nacionales/ver-todos/N-1dxafdm/c?No=%d&Nr%3DAND%28product.salepointWithActivePrice_004583%3A1%2Cproduct.shopCodes%3A004583%2COR%28product.siteId%3AbodegaSite%29%29OR%29' %n for n in range(0, 1042)]
+    # start_urls = ['https://www.carrefour.es/bodega/vinos-tintos/vinos-tintos-nacionales/ver-todos/N-1dxafdm/c', 'https://www.carrefour.es/bodega/vinos-blancos/vinos-blancos-nacionales/ver-todos/N-distyh/c', 'https://www.carrefour.es/bodega/vinos-rosados/vinos-rosados-nacionales/ver-todos/N-1yz8sfs/c']
 
     def parse(self, response):
         for link in response.css('a.js-gap-product-click::attr(href)'):
