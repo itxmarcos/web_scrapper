@@ -1,6 +1,9 @@
-import scrapy
-import time
-import re
+from scrapy.item import Item, Field
+from scrapy.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
+from scrapy.loader import ItemLoader
+#import time
+#import re
 
 """
 Command to scrape --> scrapy crawl carrefour -o carrefour.csv
@@ -11,61 +14,110 @@ name = firstWine.css("a.js-gap-product-click::text").get().replace("\n", "")
 price = firstWine.xpath("//p[contains(@class,'price price-oferta')]/text()").extract()[0].replace("\n", "")
 winery = firstWine.css('a::attr(title)').re(r"^Buscar\sproductos\spor\sla\smarca\s*(.*)")[0]
 location = firstWine.css('a::attr(title)').re(r"^D.O.\s*(.*)")[0].replace("Ca. ", "")
-# https://blog.appliedinformaticsinc.com/manipulate-scrapy-start_urls-before-a-request-is-made/
-# https://stackoverflow.com/questions/9322219/how-to-generate-the-start-urls-dynamically-in-crawling
 """
 
-class CarrefourClickSpider(scrapy.Spider):
+class WineItems(Item):
+    winery = Field()
+    name = Field()
+    origin = Field()
+    price = Field()
+    price_final = Field()
+    color = Field()
+    aging = Field()
+    year = Field()
+    description = Field()
+    parker_score = Field()
+    testing_view = Field()
+    testing_nose = Field()
+    testing_mouth = Field()
+    # alcohol_content = Field()
+    # volatile_acidity = Field()
+    # overall_acidity = Field()
+    # ph = Field()
+    # sugar = Field()
+    # bottle_format = Field()
+    # production_vinification = Field()
+    # climate_soil = Field()
+
+class CarrefourClickSpider(CrawlSpider):
     name = 'carrefour'
     allowed_domains = ['carrefour.es']
+    start_urls = ['https://www.carrefour.es/bodega/vinos-tintos/vinos-tintos-nacionales/ver-todos/N-1dxafdm/c',
+                  'https://www.carrefour.es/bodega/vinos-blancos/vinos-blancos-nacionales/ver-todos/N-distyh/c',
+                  'https://www.carrefour.es/bodega/vinos-rosados/vinos-rosados-nacionales/ver-todos/N-1yz8sfs/c']
 
-    red_urls = [
-        f'https://www.carrefour.es/bodega/vinos-tintos/vinos-tintos-nacionales/ver-todos/N-1dxafdm/c?No={n}&Nr%3DAND%28product.salepointWithActivePrice_004583%3A1%2Cproduct.shopCodes%3A004583%2COR%28product.siteId%3AbodegaSite%29%29OR%29'
-        for n in range(0, 1028, 24)]
-    white_urls = [
-        f'https://www.carrefour.es/bodega/vinos-blancos/vinos-blancos-nacionales/ver-todos/N-distyh/c?No={n}&Nr%3DAND%28product.salepointWithActivePrice_004583%3A1%2Cproduct.shopCodes%3A004583%2COR%28product.siteId%3AbodegaSite%29%29OR%29'
-        for n in range(0, 429, 24)]
-    rose_urls = [
-        f'https://www.carrefour.es/bodega/vinos-rosados/vinos-rosados-nacionales/ver-todos/N-1yz8sfs/c?No={n}&Nr%3DAND%28product.salepointWithActivePrice_004583%3A1%2Cproduct.shopCodes%3A004583%2COR%28product.siteId%3AbodegaSite%29%29OR%29'
-        for n in range(0, 80, 24)]
-    start_urls = red_urls + white_urls + rose_urls
+# RULES FOR HORIZONTAL & VERTICAL SCROLLING
+    rules = (
+        Rule(  # RULE1 => HORIZONTAL SCROLLING PER PAGE
+            LinkExtractor(
+                allow=r'c?No='
+            ), follow=True),
+        Rule(  # RULE2 => VERTICAL SCROLLING PER WINE PRODUCT
+            LinkExtractor(
+                allow=r'R-'
+            ), follow=True, callback='parse'),
+    )
 
     def parse(self, response):
-        for link in response.css('a.js-gap-product-click::attr(href)'):
-            yield response.follow(link.get(), callback=self.parse_categories)
+        item = ItemLoader(WineItems(), response)
 
-    def parse_categories(self, response):
-        container_color = response.css("div.column-desc-items")
-        wine_table = response.css("div.item-inner.item-table")
-        dataList = wine_table.css("td.w50")
-        yield {
-            'winery': response.css('p.name-marca.lora a::text').get(),
-            'location': response.css('p.name-formato.lora a::text').get(),
-            'country': 'Spain',
-            'name': response.css('h1.tileDetailBodega.title-03.apercu::text').get(),
-            'color': container_color.css("p::text")[0].get(),
-            'variety': None,
-            'price': response.css('span.js-price-total::text').get(),
-            'rating': None,
-            'body': None,
-            'acidity': self.get_acidity(dataList),
-            'crawler_day': time.strftime("%Y-%m-%d"),
-            'alcohol_percentage': self.get_alcohol_percentage(dataList),
-            'editors_choice': None,
-            'id': None,
-            'wine_review_link': None,
-            'wine_review_publish_date': None,
-            'source': "carrefour"
-        }
+        item.add_xpath('winery', '//*[@id="content"]/section/header/p/a/text()')
+        item.add_xpath('name', '//h1[@id="product-01"]/text()')
+        item.add_xpath('origin', '//*[@id="content"]/section/header/div/p/a/text()')
+        item.add_xpath('price', '//*[@id="content"]/section/div[1]/div[3]/p[1]/span[2]/text()')
+        item.add_xpath('price_final', '//*[@id="content"]/section/div[1]/div[3]/p[1]/span[2]/text()')
+        item.add_xpath('color', '//*[@id="content"]/section/div[1]/div[2]/div/div[1]/div/p/text()')
+        item.add_xpath('aging', '//*[@id="content"]/section/div[1]/div[2]/div/div[1]/div[2]/p/text()')
+        item.add_xpath('year', '//*[@id="content"]/section/div[1]/div[2]/div/div[2]/div/p/text()')
+        item.add_xpath('description', '//*[@id="content"]/section/div[1]/div[2]/div/p/text()')
+        item.add_xpath('parker_score', '//*[@id="content"]/section/div[1]/div[2]/div/div[2]/div[1]/p/text()')
+        item.add_xpath('testing_view', '//*[@id="content"]/section/div[2]/div[2]/div[2]/div[1]/p[2]/text()')
+        item.add_xpath('testing_nose', '//*[@id="content"]/section/div[2]/div[2]/div[2]/div[2]/p[2]/text()')
+        item.add_xpath('testing_mouth', '//*[@id="content"]/section/div[2]/div[2]/div[2]/div[3]/p[2]/text()')
+        #item.add_xpath('alcohol_content', '/text()')
+        #item.add_xpath('volatile_acidity', '/text()')
+        #item.add_xpath('alcohol_content', '/text()')
+        #item.add_xpath('overall_acidity', '/text()')
+        #item.add_xpath('ph', '/text()')
+        #item.add_xpath('sugar', '/text()')
+        #item.add_xpath('bottle_format', '/text()')
+        #item.add_xpath('production_vinification', '/text()')
+        #item.add_xpath('climate_soil', '/text()')
 
-    def get_acidity(self, dataList):
-        if(re.match(re.compile("\nAcidez\stotal"), dataList.css("p::text")[4].get())):
-            return dataList.css("p::text")[5].get()
-        else:
-            return None
+        yield item.load_item()
 
-    def get_alcohol_percentage(self, dataList):
-        if(re.match(re.compile("^Graduación\salcohólica"), dataList.css("p::text")[0].get())):
-            return dataList.css("p::text")[1].get()
-        else:
-            return None
+    #def parse_categories(self, response):
+        #container_color = response.css("div.column-desc-items")
+        #wine_table = response.css("div.item-inner.item-table")
+        #dataList = wine_table.css("td.w50")
+        #yield {
+            #'winery': response.css('p.name-marca.lora a::text').get(),
+            #'location': response.css('p.name-formato.lora a::text').get(),
+            #'country': 'Spain',
+            #'name': response.css('h1.tileDetailBodega.title-03.apercu::text').get(),
+            #'color': container_color.css("p::text")[0].get(),
+            #'variety': None,
+            #'price': response.css('span.js-price-total::text').get(),
+            #'rating': None,
+            #'body': None,
+            #'acidity': self.get_volatile_acidity(dataList),
+            #'crawler_day': time.strftime("%Y-%m-%d"),
+            #'alcohol_percentage': self.get_alcohol_content(dataList),
+            #'editors_choice': None,
+            #'id': None,
+            #'wine_review_link': None,
+            #'wine_review_publish_date': None,
+            #'source': "carrefour"
+        #}
+
+    #def get_volatile_acidity(self, dataList):
+    #    if(re.match(re.compile("\nAcidez\stotal"), dataList.css("p::text")[4].get())):
+    #        return dataList.css("p::text")[5].get()
+    #    else:
+    #        return None
+
+    #def get_alcohol_content(self, dataList):
+    #    if(re.match(re.compile("^Graduación\salcohólica"), dataList.css("p::text")[0].get())):
+    #        return dataList.css("p::text")[1].get()
+    #    else:
+    #        return None
