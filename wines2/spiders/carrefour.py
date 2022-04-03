@@ -7,10 +7,6 @@ Command to scrape --> scrapy crawl carrefour -o carrefour.csv
 Fortunately Carrefour's web is not provided with anticrawler blocking for Scrapy: https://www.carrefour.es/robots.txt
 There are 45 pages in total for each url.
 =====KNOWLEDGE=====
-name = firstWine.css("a.js-gap-product-click::text").get().replace("\n", "")
-price = firstWine.xpath("//p[contains(@class,'price price-oferta')]/text()").extract()[0].replace("\n", "")
-winery = firstWine.css('a::attr(title)').re(r"^Buscar\sproductos\spor\sla\smarca\s*(.*)")[0]
-location = firstWine.css('a::attr(title)').re(r"^D.O.\s*(.*)")[0].replace("Ca. ", "")
 # https://blog.appliedinformaticsinc.com/manipulate-scrapy-start_urls-before-a-request-is-made/
 # https://stackoverflow.com/questions/9322219/how-to-generate-the-start-urls-dynamically-in-crawling
 """
