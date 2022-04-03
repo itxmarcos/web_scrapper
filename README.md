@@ -90,5 +90,7 @@ En el siguiente enlace se puede consultar el archivo 'Wines.csv': [URL_enlace]
 ...
 
 ## License:
-● Released Under CC BY-NC-SA 4.0 License.
+<p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/mcaballero99/carrefour_crawler">Wine Crawler</a> by <span property="cc:attributionName">Cristina García, Marcos Caballero </span> is licensed under <a href="http://creativecommons.org/licenses/by-nc/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">CC BY-NC 4.0<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/nc.svg?ref=chooser-v1"></a></p>
+
+Esta licencia permite que el dataset sea compartido, sin embargo, al contrario que la CC BY-SA 4.0, no permite un uso comercial. Por este mismo motivo, a su vez, se ha descartado ofrecer una licencia de dominio público. A demás, de acuerdo a la encuesta disponible en la web de Creative Commons, esta licencia es la que más se ajusta a nuestras necesidades.
 
