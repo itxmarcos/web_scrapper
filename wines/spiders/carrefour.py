@@ -7,7 +7,7 @@ from scrapy.loader import ItemLoader
 
 """
 Command to scrape --> scrapy crawl carrefour -o carrefour.csv
-Fortunately Carrefour's web is not provided with anticrawler blocking for Scrapy: https://www.carrefour.es/robots.txt
+Fortunately, Carrefour's web is not provided with anticrawler blocking for Scrapy: https://www.carrefour.es/robots.txt
 """
 
 class CarrefourClickSpider(CrawlSpider):
