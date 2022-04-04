@@ -11,29 +11,6 @@ Fortunately Carrefour's web is not provided with anticrawler blocking for Scrapy
 There are 45 pages in total for each url.
 """
 
-class WineItems(Item):
-    winery = Field()
-    name = Field()
-    origin = Field()
-    price = Field()
-    price_final = Field()
-    color = Field()
-    aging = Field()
-    year = Field()
-    description = Field()
-    parker_score = Field()
-    testing_view = Field()
-    testing_nose = Field()
-    testing_mouth = Field()
-    # alcohol_content = Field()
-    # volatile_acidity = Field()
-    # overall_acidity = Field()
-    # ph = Field()
-    # sugar = Field()
-    # bottle_format = Field()
-    # production_vinification = Field()
-    # climate_soil = Field()
-
 class CarrefourClickSpider(CrawlSpider):
     name = 'carrefour'
     allowed_domains = ['carrefour.es']
