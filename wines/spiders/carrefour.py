@@ -7,38 +7,8 @@ from scrapy.loader import ItemLoader
 
 """
 Command to scrape --> scrapy crawl carrefour -o carrefour.csv
-Fortunately Carrefour's web is not provided with anticrawler blocking for Scrapy: https://www.carrefour.es/robots.txt
-There are 45 pages in total for each url.
-=====KNOWLEDGE=====
-name = firstWine.css("a.js-gap-product-click::text").get().replace("\n", "")
-price = firstWine.xpath("//p[contains(@class,'price price-oferta')]/text()").extract()[0].replace("\n", "")
-winery = firstWine.css('a::attr(title)').re(r"^Buscar\sproductos\spor\sla\smarca\s*(.*)")[0]
-location = firstWine.css('a::attr(title)').re(r"^D.O.\s*(.*)")[0].replace("Ca. ", "")
+Fortunately, Carrefour's web is not provided with anticrawler blocking for Scrapy: https://www.carrefour.es/robots.txt
 """
-
-class WineItems(Item):
-    winery = Field()
-    name = Field()
-    origin = Field()
-    price = Field()
-    price_final = Field()
-    color = Field()
-    aging = Field()
-    year = Field()
-    description = Field()
-    parker_score = Field()
-    testing_view = Field()
-    testing_nose = Field()
-    testing_mouth = Field()
-    # alcohol_content = Field()
-    # volatile_acidity = Field()
-    # overall_acidity = Field()
-    # ph = Field()
-    # sugar = Field()
-    # bottle_format = Field()
-    # production_vinification = Field()
-    # climate_soil = Field()
-
 class CarrefourClickSpider(CrawlSpider):
     name = 'carrefour'
     allowed_domains = ['carrefour.es']
@@ -60,7 +30,6 @@ class CarrefourClickSpider(CrawlSpider):
 
     def parse(self, response):
         item = ItemLoader(WineItems(), response)
-
         item.add_xpath('winery', '//*[@id="content"]/section/header/p/a/text()')
         item.add_xpath('name', '//h1[@id="product-01"]/text()')
         item.add_xpath('origin', '//*[@id="content"]/section/header/div/p/a/text()')
@@ -85,39 +54,3 @@ class CarrefourClickSpider(CrawlSpider):
         #item.add_xpath('climate_soil', '/text()')
 
         yield item.load_item()
-
-    #def parse_categories(self, response):
-        #container_color = response.css("div.column-desc-items")
-        #wine_table = response.css("div.item-inner.item-table")
-        #dataList = wine_table.css("td.w50")
-        #yield {
-            #'winery': response.css('p.name-marca.lora a::text').get(),
-            #'location': response.css('p.name-formato.lora a::text').get(),
-            #'country': 'Spain',
-            #'name': response.css('h1.tileDetailBodega.title-03.apercu::text').get(),
-            #'color': container_color.css("p::text")[0].get(),
-            #'variety': None,
-            #'price': response.css('span.js-price-total::text').get(),
-            #'rating': None,
-            #'body': None,
-            #'acidity': self.get_volatile_acidity(dataList),
-            #'crawler_day': time.strftime("%Y-%m-%d"),
-            #'alcohol_percentage': self.get_alcohol_content(dataList),
-            #'editors_choice': None,
-            #'id': None,
-            #'wine_review_link': None,
-            #'wine_review_publish_date': None,
-            #'source': "carrefour"
-        #}
-
-    #def get_volatile_acidity(self, dataList):
-    #    if(re.match(re.compile("\nAcidez\stotal"), dataList.css("p::text")[4].get())):
-    #        return dataList.css("p::text")[5].get()
-    #    else:
-    #        return None
-
-    #def get_alcohol_content(self, dataList):
-    #    if(re.match(re.compile("^Graduación\salcohólica"), dataList.css("p::text")[0].get())):
-    #        return dataList.css("p::text")[1].get()
-    #    else:
-    #        return None
