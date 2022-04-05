@@ -39,22 +39,15 @@ class CarrefourClickSpider(scrapy.Spider):
         wine_table = response.css("div.item-inner.item-table")
         dataList = wine_table.css("td.w50")
         yield {
+            'wine': response.css('h1.tileDetailBodega.title-03.apercu::text').get(),
             'winery': response.css('p.name-marca.lora a::text').get(),
-            'location': response.css('p.name-formato.lora a::text').get(),
+            'origin': response.css('p.name-formato.lora a::text').get(),
             'country': 'Spain',
-            'name': response.css('h1.tileDetailBodega.title-03.apercu::text').get(),
-            'color': container_color.css("p::text")[0].get(),
-            'variety': None,
+            'variety': container_color.css("p::text")[0].get(),
             'price': response.css('span.js-price-total::text').get(),
-            'rating': None,
-            'body': None,
             'acidity': self.get_acidity(dataList),
-            'crawler_day': time.strftime("%Y-%m-%d"),
             'alcohol_percentage': self.get_alcohol_percentage(dataList),
-            'editors_choice': None,
-            'id': None,
-            'wine_review_link': None,
-            'wine_review_publish_date': None,
+            'date': time.strftime("%Y-%m-%d"),
             'source': "carrefour"
         }
 
