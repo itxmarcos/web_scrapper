@@ -13,9 +13,9 @@
 # <b><u> Crawler precios de vinos </b></u>
 
 ## <b> Introducción </b>
-Se desea elaborar varios crawlers para extraer diversa información acerca de los vinos a nivel nacional para la creación de un dataset y su posterior análisis y extracción de valor a lo largo del tiempo. Para ello, se utilizará la tecnología de web scrapping con el framework de Scrapy en Python y un API.
+Se desean elaborar varios crawlers para extraer diversa información acerca de los vinos a nivel nacional para la creación de varios datasets y su posterior análisis y extracción de valor a lo largo del tiempo. Para ello, se utilizará la tecnología de web scrapping con el framework de Scrapy en Python y un API.
 
-En el futuro se pretende monitorear los precios de los vinos para aumentar la competitividad de las bodegas españolas.
+En el futuro se pretende monitorizar los precios de los vinos para aumentar la competitividad de las bodegas españolas.
 
 ## Cómo replicar el entorno
 Comandos para ejecutar los crawlers:
@@ -68,7 +68,7 @@ Campos extraídos:
   - `description`: Un pequeño texto con los aspectos más destacables sobre el vino.
   - `food`: Una lista de comidas con las que se sugiere acompañar el vino.
   - `date`: la fecha de extracción de los datos del crawler.
-  - `source`: en este caso siempre será carrefour.
+  - `source`: en este caso siempre será vivino.
 
 ### Datasets
 Enlaces al repositorio Zenodo (DOI):
